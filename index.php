@@ -1,30 +1,28 @@
 <?php
-$topik_penelitian = [
-    [
-        "rumpun_ilmu" => "Artificial Intelligence",
-        "taksonomi"   => "Computer Vision untuk Diagnosa Medis",
-        "deskripsi"   => "Diagnosa Medis Pengembangan model Deep Learning berbasis CNN untuk pendeteksian dini penyakit paru-paru melalui citra Rontgen X-Ray secara otomatis.",
-        "kata_kunci"  => "CNN, Medical Imaging, Deep Learning"
-    ],
-    [
-        "rumpun_ilmu" => "Rekayasa Perangkat Lunak",
-        "taksonomi"   => "Migrasi Arsitektur Microservices",
-        "deskripsi"   => "Analisis performa, keandalan, dan skalabilitas sistem e-commerce saat bertransisi dari aplikasi Monolith ke arsitektur Microservices berbasis Docker.",
-        "kata_kunci"  => "Microservices, Docker, Scalability"
-    ],
-    [
-        "rumpun_ilmu" => "Jaringan & Keamanan Siber",
-        "taksonomi"   => "Deteksi Serangan DDoS Menggunakan ML",
-        "deskripsi"   => "Implementasi algoritma Random Forest untuk mendeteksi anomali lalu lintas jaringan dan ancaman serangan DDoS pada server Cloud secara real-time.",
-        "kata_kunci"  => "Cyber Security, DDoS, Random Forest"
-    ],
-    [
-        "rumpun_ilmu" => "Sistem Informasi & Data",
-        "taksonomi"   => "Analisis Sentimen Publik pada Media Sosial",
-        "deskripsi"   => "Pemanfaatan metode Natural Language Processing (NLP) dengan arsitektur BERT untuk mengklasifikasikan persepsi pengguna terhadap kebijakan publik.",
-        "kata_kunci"  => "NLP, BERT, Sentiment Analysis"
-    ]
-];
+
+require_once 'koneksi.php';
+
+$query  = "SELECT * FROM topikbidangilmu ORDER BY id DESC";
+$result = mysqli_query($koneksi, $query);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $rumpun_ilmu     = $_POST['rumpun_ilmu'] ?? '';
+    $topik_riset     = $_POST['topik_riset'] ?? '';
+    $deskripsi_fokus = $_POST['deskripsi_fokus'] ?? '';
+    $kata_kunci      = $_POST['kata_kunci'] ?? '';
+
+    if (!empty($rumpun_ilmu) && !empty($topik_riset)) {
+        $sql = "INSERT INTO topikbidangilmu (Rumpun_Ilmu, Pengelolaan_Taksonomi_Topik_Riset, Deskripsi_Fokus, Kata_Kunci_Penelitian) 
+                VALUES ('$rumpun_ilmu', '$topik_riset', '$deskripsi_fokus', '$kata_kunci')";
+
+        if (mysqli_query($koneksi, $sql)) {
+            header("Location: index.php");
+            exit();
+        } else {
+            echo "Gagal menyimpan data: " . mysqli_error($koneksi);
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,6 +34,7 @@ $topik_penelitian = [
 </head>
 <body>
     <h1>Modul Topik dan Bidang Minat</h1>
+    <a href = "tambah.php" class = "btn btn-primary mb-3">Tambah Topik</a>
     <table class="table">
   <thead>
     <tr>
@@ -46,15 +45,21 @@ $topik_penelitian = [
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($topik_penelitian as $row): ?>
-    <tr>
-      <td><?= $row['rumpun_ilmu']; ?></td>
-      <td><?= $row['taksonomi']; ?></td>
-      <td><?= $row['deskripsi']; ?></td>
-      <td><?= $row['kata_kunci']; ?></td>
-    </tr>
-    <?php endforeach; ?>
-  </tbody>
+    <?php if (mysqli_num_rows($result) > 0): ?>
+        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+            <tr>
+                <td><?= htmlspecialchars($row['Rumpun_Ilmu']); ?></td>
+                <td><?= htmlspecialchars($row['Pengelolaan_Taksonomi_Topik_Riset']); ?></td>
+                <td><?= htmlspecialchars($row['Deskripsi_Fokus']); ?></td>
+                <td><?= htmlspecialchars($row['Kata_Kunci_Penelitian']); ?></td>
+            </tr>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="4" class="text-center">Belum ada data topik penelitian.</td>
+        </tr>
+    <?php endif; ?>
+</tbody>
 </table>
 </body>
 </html>

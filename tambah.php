@@ -1,12 +1,3 @@
-<?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $rumpun_ilmu     = $_POST['rumpun_ilmu'] ?? '';
-    $topik_riset     = $_POST['topik_riset'] ?? '';
-    $deskripsi_fokus = $_POST['deskripsi_fokus'] ?? '';
-    $kata_kunci      = $_POST['kata_kunci'] ?? '';
-
-}
-?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -16,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-<form action="" method="POST">
+<form method="POST" action="index.php">
   <div class="mb-3">
     <label for="rumpunilmuTextInput" class="form-label">Rumpun Ilmu</label>
     <input type="text" name="rumpun_ilmu" id="rumpunilmuTextInput" class="form-control" placeholder="Input Rumpun Ilmu">
