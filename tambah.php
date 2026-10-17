@@ -1,3 +1,50 @@
+<?php
+require "koneksi.php";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $kode_ruang   = $_POST["kode_ruang"];
+    $nama_ruang   = $_POST["nama_ruang"];
+    $nomor_gedung = $_POST["nomor_gedung"];
+    $kapasitas    = $_POST["kapasitas"];
+    
+    $fasilitas_array = [];
+    if (isset($_POST["proyektor"])) {
+        $fasilitas_array[] = "Proyektor";
+    }
+    if (isset($_POST["pc"])) {
+        $fasilitas_array[] = "PC";
+    }
+    
+    $fasilitas = implode(", ", $fasilitas_array);
+    if (empty($fasilitas)) {
+        $fasilitas = "Tidak ada";
+    }
+
+    $sql = "INSERT INTO tb_ruang (no_gedung, kode_ruang, nama_ruang, fasilitas, kapasitas) 
+            VALUES (?, ?, ?, ?, ?)";
+    
+    $simpan = mysqli_execute_query($koneksi, $sql, [
+        $nomor_gedung,
+        $kode_ruang,
+        $nama_ruang,
+        $fasilitas,
+        $kapasitas
+    ]);
+    
+    if ($simpan) {
+        echo "<script>
+                alert('Data berhasil disimpan!');
+                window.location.href = 'index.php';
+              </script>";
+        exit;
+    } else {
+        echo "<script>
+                alert('Gagal menyimpan data: " . mysqli_error($koneksi) . "');
+              </script>";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -29,6 +76,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         button[type="submit"]:hover {
@@ -38,21 +86,21 @@
 </head>
 <body>
     <nav>
-        <a href="index.html">Daftar Ruang</a> |
-        <a href="tambah.html">Tambah Ruang</a>
+        <a href="index.php">Daftar Ruang</a> |
+        <a href="tambah.php">Tambah Ruang</a>
     </nav>
     <hr>
 
     <h2>Formulir Tambah Ruang Sidang</h2>
 
-    <form action="#" method="GET">
+    <form action="" method="POST">
         <div>
             <label for="kode_ruang">Kode Ruang:</label><br>
             <input type="text" id="kode_ruang" name="kode_ruang" required>
         </div>
         <br>
         <div>
-            <label> <for="nama_ruang">Nama Ruang:</label><br>
+            <label for="nama_ruang">Nama Ruang:</label><br>
             <input type="text" id="nama_ruang" name="nama_ruang" required>
         </div>
         <br>
@@ -76,6 +124,5 @@
         <br>
         <button type="submit">Kirim Data</button>
     </form>
-
 </body>
 </html>
