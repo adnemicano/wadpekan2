@@ -1,30 +1,11 @@
 <?php
-
-require_once 'koneksi.php';
+require_once 'koneksi.php'; 
 
 $query  = "SELECT * FROM topikbidangilmu ORDER BY id DESC";
 $result = mysqli_query($koneksi, $query);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $rumpun_ilmu     = $_POST['rumpun_ilmu'] ?? '';
-    $topik_riset     = $_POST['topik_riset'] ?? '';
-    $deskripsi_fokus = $_POST['deskripsi_fokus'] ?? '';
-    $kata_kunci      = $_POST['kata_kunci'] ?? '';
-
-    if (!empty($rumpun_ilmu) && !empty($topik_riset)) {
-        $sql = "INSERT INTO topikbidangilmu (Rumpun_Ilmu, Pengelolaan_Taksonomi_Topik_Riset, Deskripsi_Fokus, Kata_Kunci_Penelitian) 
-                VALUES ('$rumpun_ilmu', '$topik_riset', '$deskripsi_fokus', '$kata_kunci')";
-
-        if (mysqli_query($koneksi, $sql)) {
-            header("Location: index.php");
-            exit();
-        } else {
-            echo "Gagal menyimpan data: " . mysqli_error($koneksi);
-        }
-    }
-}
 ?>
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -42,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <th scope="col">Pengelolaan taksonomi topik riset</th>
       <th scope="col">Deskripsi fokus</th>
       <th scope="col">Kata kunci penelitian</th>
+      <th scope="col">Aksi</th>
     </tr>
   </thead>
   <tbody>
@@ -49,9 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php while ($row = mysqli_fetch_assoc($result)): ?>
             <tr>
                 <td><?= htmlspecialchars($row['Rumpun_Ilmu']); ?></td>
-                <td><?= htmlspecialchars($row['Pengelolaan_Taksonomi_Topik_Riset']); ?></td>
+                <td><?= htmlspecialchars($row['Pengelolaan_Taksonomi_Topik_Riset']); ?></td>    
                 <td><?= htmlspecialchars($row['Deskripsi_Fokus']); ?></td>
                 <td><?= htmlspecialchars($row['Kata_Kunci_Penelitian']); ?></td>
+                <td>
+                    <a href="edit.php?id=<?= $row['id'] ?>"class="btn btn-warning btn-sm">Edit</a>
+                    <a href="hapus.php?id=<?= $row['id'] ?>"class="btn btn-danger btn-sm">Hapus</a>
+                </td>   
             </tr>
         <?php endwhile; ?>
     <?php else: ?>
