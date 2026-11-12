@@ -64,17 +64,23 @@ class TopikBidangIlmuController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
-        'Rumpun_Ilmu' => 'required',
-        'Pengelolaan_Taksonomi_Topik_Riset' => 'required',
-        'Deskripsi_Fokus' => 'required',
-        'Kata_Kunci_Penelitian' => 'required',
-        ]);
-
-        $topik = TopikBidangIlmu::findOrFail($id);
-        $topik->update($request->all());
-
-        return redirect()->route('topik.index')->with('success', 'Data topik berhasil diperbarui!');
+        // Cek apakah user memenuhi policy 'update'
+        if ($request->user()->can('update', $topikBidangIlmu)) {
+            // Jika Admin atau Operator dengan hak penuh, validasi semua kolom
+            $data = $request->validate([
+                'Rumpun_Ilmu' => 'required|string|max:255',
+                'Pengelolaan_Taksonomi_Topik_Riset' => 'required|string',
+                'Deskripsi_Fokus' => 'required|string',
+                'Kata_Kunci_Penelitian' => 'required|string',
+            ]);
+        } else {
+            // Jika ada batasan kolom tertentu untuk role lain
+            $data = $request->validate([
+            'Deskripsi_Fokus' => 'required|string',
+            ]);
+        }
+        $topikBidangIlmu->update($data);
+        return redirect()->route('topik.index')->with('success', 'Data berhasil diperbarui.');
     }
     
     //delate

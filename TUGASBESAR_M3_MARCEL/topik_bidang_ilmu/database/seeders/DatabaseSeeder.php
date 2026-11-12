@@ -16,10 +16,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Membuat akun Admin
         User::updateOrCreate(
             ['username' => 'admin'],
             [
-            'password' => Hash::make('admin12345'),
+                'password' => Hash::make('admin12345'),
+                'role' => 'admin',
+            ]
+        );
+
+        // Membuat akun Operator
+        User::updateOrCreate(
+            ['username' => 'operator'],
+            [
+                'password' => Hash::make('operator12345'),
+                'role' => 'operator',
             ]
         );
     }

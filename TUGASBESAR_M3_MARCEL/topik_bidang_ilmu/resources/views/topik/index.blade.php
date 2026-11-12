@@ -92,6 +92,10 @@
                     {{-- Jika belum login, tampilkan tombol Login Admin --}}
                     <a href="{{ route('login') }}" class="btn btn-primary btn-sm">Login Admin</a>
                 @endauth
+                
+                @can('akses-admin')
+                <a href="{{ route('topik.laporan') }}" class="btn btn-primary mb-3">Laporan Khusus Admin</a>
+                @endcan
             </div>
         </div>
 
@@ -131,16 +135,18 @@
                                 <td>{{ $row->Deskripsi_Fokus }}</td>
                                 <td>{{ $row->Kata_Kunci_Penelitian }}</td>
                                 
-                                {{-- Tombol Edit & Hapus HANYA MUNCUL jika sudah login --}}
+                                {{-- Tombol Edit selalu muncul untuk yang login, Tombol Hapus KHUSUS ADMIN --}}
                                 @auth
                                     <td class="text-center">
                                         <a href="{{ route('topik.edit', $row->id) }}" class="btn btn-warning btn-sm">Edit</a>
                         
-                                        <form action="{{ route('topik.destroy', $row->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                        </form>
+                                        @can('akses-admin')
+                                            <form action="{{ route('topik.destroy', $row->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                            </form>
+                                        @endcan
                                     </td>
                                 @endauth
                             </tr>

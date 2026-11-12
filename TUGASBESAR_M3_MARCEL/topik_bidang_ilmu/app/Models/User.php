@@ -18,6 +18,11 @@ class User extends Authenticatable
         'password',
         'role',
     ];
+    
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
 
     protected $hidden = [
         'password',
