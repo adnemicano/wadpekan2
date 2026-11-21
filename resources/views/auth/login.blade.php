@@ -1,83 +1,52 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Login</title>
-</head>
-<body>
+@extends('layouts.app')
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ url('/') }}">Modul Ruang</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a @class(['nav-link', 'active' => request()->is('/')]) href="{{ url('/') }}">Beranda</a>
-                </li>
-                <li class="nav-item">
-                    <a @class(['nav-link', 'active' => request()->is('daftar-ruang')])
-                       href="{{ url('/daftar-ruang') }}">Daftar Ruang</a>
-                </li>
-                @auth
-                <li class="nav-item">
-                    <form action="{{ url('/logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="nav-link">Logout ({{ Auth::user()->username }})</button>
-                    </form>
-                </li>
-                @else
-                <li class="nav-item">
-                    <a @class(['nav-link', 'active' => request()->is('login')])
-                       href="{{ url('/login') }}">Login</a>
-                </li>
-                @endauth
-            </ul>
-        </div>
-    </div>
-</nav>
+@section('title', 'Login - Modul Ruang & Fasilitas')
 
-<section class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-4">
-                <div class="card p-4 shadow-sm">
-                    <h2 class="h4 fw-bold mb-3 border-bottom pb-2">Login Admin</h2>
+@section('content')
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-5">
+            <div class="card border rounded-1 shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h4 fw-bold text-center mb-1">Login</h1>
+                    <p class="text-muted text-center small mb-4">Modul Ruang & Fasilitas</p>
 
-                    @if ($errors->any())
-                        <div class="alert alert-danger">{{ $errors->first() }}</div>
+                    @if (session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
 
                     <form action="{{ route('login.proses') }}" method="POST">
                         @csrf
-                        <div class="mb-3">
-                            <label for="username" class="form-label fw-semibold">Username</label>
-                            <input type="text" class="form-control" id="username" name="username"
-                                   value="{{ old('username') }}" required autofocus>
-                        </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label fw-semibold">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control @error('username') is-invalid @enderror"
+                                   id="username" name="username" value="{{ old('username') }}" required autofocus>
+                            @error('username')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">Ingat saya</label>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                   id="password" name="password" required>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100 py-2">Masuk</button>
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+
+                        <p class="text-center small text-muted mb-0">
+                            Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a>
+                        </p>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</section>
-
-</body>
-</html>
+@endsection

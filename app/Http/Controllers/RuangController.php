@@ -54,12 +54,21 @@ class RuangController extends Controller
 
     public function update(Request $request, Ruang $ruang)
     {
-        $data = $request->validate([
-            'kode_ruang' => 'required|max:50',
-            'nama_ruang' => 'required|max:100',
-            'no_gedung'  => 'required|max:50',
-            'kapasitas'  => 'required|integer|min:1',
-        ]);
+        // Langkah 7.2: Batasi kolom yang boleh diubah berdasarkan Policy
+        if ($request->user()->can('updateFull', $ruang)) {
+            // Admin boleh mengubah semua kolom
+            $data = $request->validate([
+                'kode_ruang' => 'required|max:50',
+                'nama_ruang' => 'required|max:100',
+                'no_gedung'  => 'required|max:50',
+                'kapasitas'  => 'required|integer|min:1',
+            ]);
+        } else {
+            // Petugas hanya boleh mengubah kapasitas (dan fasilitas)
+            $data = $request->validate([
+                'kapasitas'  => 'required|integer|min:1',
+            ]);
+        }
 
         $fasilitas_array = [];
         if ($request->has('proyektor')) {
